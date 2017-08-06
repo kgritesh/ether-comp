@@ -1,0 +1,33 @@
+{
+  "name": "ether-comp-server",
+  "version": "0.0.1",
+  "description": "Backend Server for ether-comp Dapp",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "clean": "rm -rf dist/",
+    "dev": "nodemon app.js --exec babel-node src --presets es2015,stage-0",
+    "build": "babel . -s -D -d dist --presets es2015,stage-0",
+    "start": "node dist",
+    "prestart": "npm run -s build",
+    "test": "eslint ."
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "bunyan": "^1.8.12",
+    "bunyan-sentry-stream": "^1.1.0",
+    "cookie-parser": "~1.4.3",
+    "create-react-app": "^1.3.3",
+    "debug": "~2.6.3",
+    "enumify": "^1.0.4",
+    "express": "~4.15.2",
+    "global": "^4.3.2",
+    "googleapis": "^20.1.0",
+    "helmet": "^3.8.0",
+    "morgan": "~1.8.1",
+    "raven": "^2.1.1",
+    "serve-favicon": "~2.4.2",
+    "thinky": "^2.3.8"
+  },
+  "author": "Ritesh Kadmawala<ritesh@loanzen.in>"
+}
