@@ -11,7 +11,7 @@ const streams = [
   }
 ];
 
-if (config.sentry.dsn) {
+if (config.SENTRY.dsn) {
   const sentryClient = Raven.config(
     config.SENTRY.dsn,
     config.SENTRY.options

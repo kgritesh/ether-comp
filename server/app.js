@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 
 import config from './config/config';
-import router from './routes/index';
+import apiRouter from './routes';
 
 const app = express();
 app.use(helmet());
@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', router());
+app.use('/', apiRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -35,7 +35,6 @@ app.use((err, req, res) => {
     errorResp.stacktrace = err.stack;
   }
   res.status(err.status || 500);
-
 
   res.json(errorResp);
 });

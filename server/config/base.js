@@ -27,6 +27,21 @@ export default class BaseConfig {
       sendTimeout: 5
     }
   };
+  static BASE_URL = 'http://127.0.0.1:3000';
+
+  static PROVIDER = {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || '659469567456-vbvpqn4ds73kusrjuhie83vtuaols2tm.apps.googleusercontent.com',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'KULx7tGEAbi2OmxSejwL_u3s',
+      oauth2Scopes: [
+        'https://www.googleapis.com/auth/userinfo#email',
+        'https://mail.google.com/'
+      ],
+      oauth2RedirectUrl: 'auth/google/complete/',
+      projectId: 'ether-comp',
+      gmailPubSubTopic: 'projects/bitemailer-171607/topics/gmail_events'
+    }
+  };
 
   static VERSION = process.env.npm_package_version;
   static PROJECT_ROOT = path.basename(__dirname);
