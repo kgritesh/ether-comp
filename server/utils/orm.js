@@ -4,23 +4,16 @@ import startCase from 'lodash/startCase';
 import * as utils from './utils';
 
 export const Model = db => (modelCls) => {
-  const mergeParentProps = (cls, propValues) => {
-    const proto = Object.getPrototypeOf(cls);
-    if (proto === Function.prototype) {
-      return propValues;
-    }
-    Object.keys(propValues).forEach((prop) => {
-      propValues[prop] = { ...(proto[prop] || {}), ...propValues[prop] };
-    });
-    return mergeParentProps(proto, propValues);
-  };
-  // Create Model by combining all the fields and options
-  const propValues = mergeParentProps(modelCls, {
-    schema: modelCls.schema,
-    options: modelCls.options
+  const protoChain = utils.getProtoChain(modelCls);
+  let schema = {};
+  let options = {};
+
+  protoChain.forEach(proto => {
+    schema = { ...schema, ...(proto.schema || {}) };
+    options = { ...options, ...(proto.options || {}) };
   });
 
-  const model = db.createModel(modelCls.name, propValues.schema, propValues.options);
+  const model = db.createModel(modelCls.name, schema, options);
 
   // Add all indices
 
@@ -32,15 +25,16 @@ export const Model = db => (modelCls) => {
     }
   });
 
-  // Copy all methods to the model prototype
+  protoChain.forEach(proto => {
+    // Copy all methods to the model prototype
+    utils.copyOwnProperties(proto.prototype, model.prototype, {
+      exclude: ['constructor']
+    });
 
-  utils.copyOwnProperties(modelCls.prototype, model.prototype, {
-    exclude: ['constructor']
-  });
-
-  // Copy all class methods to the model
-  utils.copyOwnProperties(modelCls, model, {
-    exclude: ['name', 'options', 'indices', 'prototype', 'length', 'schema']
+    // Copy all class methods to the model
+    utils.copyOwnProperties(proto, model, {
+      exclude: ['name', 'options', 'indices', 'prototype', 'length', 'schema']
+    });
   });
 
   // Set all hooks

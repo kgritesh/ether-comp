@@ -17,13 +17,13 @@ export default {
     const googleClient = getGoogleClient();
     try {
       const { user, accessToken, refreshToken } = await googleClient.getUser(req.query.code);
-      const result = await User.createOrUpdate({
+      const result = await User.createOrUpdate('email', {
         ...user,
         accessToken,
         refreshToken,
         provider: AuthProvider.GOOGLE.value
       });
-      req.log.info('User logged in successfully', result);
+      req.logger.info('User logged in successfully', result);
       res.json(result);
     } catch (err) {
       console.error(err);
