@@ -6,6 +6,8 @@ const logName = 'ether-comp';
 export default class BaseConfig {
   static PORT = process.env.port || 3000;
 
+  static DEBUG = false;
+
   static DB = {
     host: process.env.RETHINK_DB_HOST || 'localhost',
     port: process.env.RETHINK_DB_PORT || '28015',

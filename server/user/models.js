@@ -1,6 +1,9 @@
 import uuidv4 from 'uuid/v4';
-import {Enum} from 'enumify';
+import { Enum } from 'enumify';
+
 import db from '../config/db';
+import { Model } from '../utils/orm';
+
 
 const type = db.type;
 const r = db.r;
@@ -24,42 +27,85 @@ AuthProvider.initEnum({
 
 export const AuthProviderList = AuthProvider.enumValues.map(val => val.value);
 
-export const User = db.createModel('User', {
-  id: type.string().uuid('4').required().default(() => uuidv4()),
-  email: type.string().email().required(),
-  firstName: type.string().required(),
-  lastName: type.string().required(),
-  provider: type.string().required().enum(AuthProviderList),
-  accessToken: type.string().optional(),
-  refreshToken: type.string().optional(),
-  extra: type.object().optional(),
-  createdAt: type.date().default(r.now()),
-  updatedAt: type.date(),
-  lastLoginAt: type.date()
-});
+@Model(db)
+export class User {
+  static schema = {
+    id: type.string().uuid('4').required().default(() => uuidv4()),
+    email: type.string().email().required(),
+    firstName: type.string().required(),
+    lastName: type.string().required(),
+    provider: type.string().required().enum(AuthProviderList),
+    accessToken: type.string().optional(),
+    refreshToken: type.string().optional(),
+    extra: type.object().optional(),
+    createdAt: type.date().default(r.now()),
+    updatedAt: type.date(),
+    lastLoginAt: type.date()
+  };
 
-User.ensureIndex('email');
+  static indices = ['email'];
 
-User.pre('save', function () {
-  this.updatedAt = new Date();
-});
+  static create = function create(props) {
+    const user = new User(props);
+    return user.save();
+  };
 
-
-User.create = function create(props) {
-  const user = new User(props);
-  return user.save();
-};
-
-
-User.createOrUpdate = async function createorUpdate({ email, ...props }) {
-  const exists = await User.filter({ email }).count().gt(0).branch(true, false).execute();
-  if (exists) {
-    console.log('User already exists with this email id', email);
-    const user = await User.filter({ email }).run().then(
-      users => users[0].merge(props).save());
+  static createOrUpdate = async function createorUpdate({ email, ...props }) {
+    const exists = await User.filter({ email })
+      .count().gt(0).branch(true, false)
+      .execute();
+    if (exists) {
+      console.log('User already exists with this email id', email);
+      const user = await User.filter({ email }).run().then(
+        users => users[0].merge(props).save());
+      return user;
+    }
+    console.log('New User', email);
+    const user = await User.create({ email, ...props });
     return user;
   }
-  console.log('New User', email);
-  const user = await User.create({ email, ...props });
-  return user;
-};
+
+  preSave() {
+    this.updatedAt = new Date();
+  }
+}
+
+// export const User = db.createModel('User', {
+//   id: type.string().uuid('4').required().default(() => uuidv4()),
+//   email: type.string().email().required(),
+//   firstName: type.string().required(),
+//   lastName: type.string().required(),
+//   provider: type.string().required().enum(AuthProviderList),
+//   accessToken: type.string().optional(),
+//   refreshToken: type.string().optional(),
+//   extra: type.object().optional(),
+//   createdAt: type.date().default(r.now()),
+//   updatedAt: type.date(),
+//   lastLoginAt: type.date()
+// });
+
+// User.ensureIndex('email');
+
+// User.pre('save', function () {
+//   this.updatedAt = new Date();
+// });
+
+
+// User.create = function create(props) {
+//   const user = new User(props);
+//   return user.save();
+// };
+
+
+// User.createOrUpdate = async function createorUpdate({ email, ...props }) {
+//   const exists = await User.filter({ email }).count().gt(0).branch(true, false).execute();
+//   if (exists) {
+//     console.log('User already exists with this email id', email);
+//     const user = await User.filter({ email }).run().then(
+//       users => users[0].merge(props).save());
+//     return user;
+//   }
+//   console.log('New User', email);
+//   const user = await User.create({ email, ...props });
+//   return user;
+// };

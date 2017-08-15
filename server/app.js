@@ -1,21 +1,22 @@
 import express from 'express';
 import path from 'path';
-import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 
+import logger from './config/logger';
+import loggerMiddleware from './utils/loggerMiddleware';
 import config from './config/config';
 import apiRouter from './routes';
 
 const app = express();
-app.use(helmet());
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', apiRouter);
+app.use(helmet())
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({ extended: true }))
+  .use(cookieParser())
+  .use(express.static(path.join(__dirname, 'public')))
+  .use(loggerMiddleware(logger))
+  .use('/', apiRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -40,7 +41,7 @@ app.use((err, req, res) => {
 });
 
 app.listen(config.PORT, () => {
-  console.log(`Listening on ${config.PORT}`);
+  logger.info(`Ether Comp Server started. Listening on port: ${config.PORT}`);
 });
 
 

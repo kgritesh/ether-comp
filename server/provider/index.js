@@ -1,4 +1,4 @@
-import urljoin from 'urljoin';
+import urljoin from 'url-join';
 
 import config from '../config/config';
 import GoogleClient from './google';

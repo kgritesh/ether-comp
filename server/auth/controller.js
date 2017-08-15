@@ -1,6 +1,7 @@
 import config from '../config/config';
 import { getGoogleClient } from '../provider/index';
 import { User, AuthProvider } from '../user/models';
+import logger from '../config/logger';
 
 const googleConfig = config.PROVIDER.google;
 
@@ -22,7 +23,7 @@ export default {
         refreshToken,
         provider: AuthProvider.GOOGLE.value
       });
-      console.log('User Created Successfully', result);
+      req.log.info('User logged in successfully', result);
       res.json(result);
     } catch (err) {
       console.error(err);
