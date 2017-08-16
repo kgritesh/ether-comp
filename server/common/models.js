@@ -24,7 +24,6 @@ export class BaseModel {
 
   static createOrUpdate = async function createorUpdate(identKey, props) {
     const uniqFilter = { [identKey]: props[identKey] };
-    console.log(uniqFilter);
     const exists = await this.filter(uniqFilter)
       .count().gt(0).branch(true, false)
       .execute();

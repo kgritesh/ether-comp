@@ -9,8 +9,8 @@ export const Model = db => (modelCls) => {
   let options = {};
 
   protoChain.forEach(proto => {
-    schema = { ...schema, ...(proto.schema || {}) };
-    options = { ...options, ...(proto.options || {}) };
+    schema = { ...(proto.schema || {}), ...schema };
+    options = { ...(proto.options || {}), ...options };
   });
 
   const model = db.createModel(modelCls.name, schema, options);

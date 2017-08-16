@@ -26,5 +26,5 @@ export function getProtoChain(cls) {
     chain.push(proto);
     proto = Object.getPrototypeOf(proto);
   }
-  return reverse(chain);
+  return chain;
 }

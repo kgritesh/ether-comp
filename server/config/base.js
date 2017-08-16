@@ -4,9 +4,11 @@ const env = process.env.NODE_ENV || 'dev';
 const logName = 'ether-comp';
 
 export default class BaseConfig {
-  static PORT = process.env.port || 3000;
+  static PORT = process.env.PORT || 3000;
 
   static DEBUG = false;
+
+  static SECRET_KEY = process.env.SECRET_KEY;
 
   static DB = {
     host: process.env.RETHINK_DB_HOST || 'localhost',
@@ -43,6 +45,13 @@ export default class BaseConfig {
       projectId: 'ether-comp',
       gmailPubSubTopic: 'projects/bitemailer-171607/topics/gmail_events'
     }
+  };
+
+  static JWT = {
+    audience: 'https://ether-comp.in',
+    algorithm: 'HS256',
+    expiresIn: '7d',
+    notBefore: 0
   };
 
   static VERSION = process.env.npm_package_version;
