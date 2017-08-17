@@ -26,6 +26,7 @@
     "arrow-parens": 0,
     "func-names": 0,
     "import/prefer-default-export": 0,
-    "padded-blocks": 0
+    "padded-blocks": 0,
+    "react/jsx-filename-extension": 0
   }
 }
