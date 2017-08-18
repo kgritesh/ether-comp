@@ -4,6 +4,7 @@ import { createLogger } from 'redux-logger';
 import { Iterable } from 'immutable';
 import isPlainObject from 'lodash/isPlainObject';
 import { routerMiddleware } from 'react-router-redux';
+import { composeWithDevTools } from 'redux-devtools-extension/logOnlyInProduction';
 
 import config from '../config/config';
 import rootReducer from './reducers';
@@ -39,8 +40,10 @@ export default function configureStore(history) {
 
   return createStore(
     rootReducer,
-    applyMiddleware(
-      ...middlewares
+    composeWithDevTools(
+      applyMiddleware(
+        ...middlewares
+      )
     )
   );
 }

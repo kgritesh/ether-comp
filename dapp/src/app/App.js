@@ -1,16 +1,18 @@
 import React from 'react';
+import { Switch } from 'react-router-dom';
 
-import { AppRoutes } from '../constants/routes';
 import AuthRoute from '../auth/AuthRoute';
 import UnAuthRoute from '../auth/UnAuthRoute';
-import Home from '../App';
-import Login from '../auth/Login';
+import MainAppFlow from './MainAppFlow';
+import RegistrationFlow from './RegistrationFlow';
 
 export default function () {
   return (
     <div>
-      <AuthRoute path={AppRoutes.home} exact component={Home} />
-      <UnAuthRoute path={AppRoutes.login} component={Login} />
+      <Switch>
+        <UnAuthRoute path="/auth" component={RegistrationFlow} />
+        <AuthRoute path="/" component={MainAppFlow} />
+      </Switch>
     </div>
   );
 }

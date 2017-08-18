@@ -3,7 +3,8 @@ import { handleActions } from 'redux-actions';
 
 const initialState = Immutable.fromJS({
   isAuthenticated: false,
-  user: null
+  user: null,
+  isFetchingToken: false
 });
 
 

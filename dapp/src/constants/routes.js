@@ -1,5 +1,12 @@
+import { APIRoutes as authAPIRoutes } from '../auth/routes';
+
 export const AppRoutes = {
-  login: '/login',
+  login: '/auth/login',
   home: '/',
-  logout: '/logout'
+  logout: '/auth/logout'
+};
+
+
+export const APIRoutes = {
+  ...authAPIRoutes
 };
