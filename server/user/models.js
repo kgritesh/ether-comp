@@ -1,45 +1,8 @@
-import uuidv4 from 'uuid/v4';
-import { Enum } from 'enumify';
-
 import db from '../config/db';
 import { BaseModel } from '../common/models';
 import { Model } from '../utils/orm';
 
 const type = db.type;
-
-export class AuthProvider extends Enum {}
-
-AuthProvider.initEnum({
-  GOOGLE: {
-    label: 'Google',
-    value: 'GOOGLE'
-  },
-  YAHOO: {
-    label: 'Yahoo',
-    value: 'YAHOO'
-  },
-  OUTLOOK: {
-    label: 'Microsoft Outlook',
-    value: 'OUTLOOK'
-  }
-});
-
-export const AuthProviderList = AuthProvider.enumValues.map(val => val.value);
-
-@Model(db)
-export class EmailAccount extends BaseModel {
-  static schema = {
-    userId: type.string().uuid('4').required(),
-    email: type.string().email().required(),
-    provider: type.string().required().enum(AuthProviderList),
-    accessToken: type.string().optional(),
-    refreshToken: type.string().optional(),
-    active: type.boolean().default(false)
-  }
-
-  static indices = ['email'];
-}
-
 
 @Model(db)
 export class User extends BaseModel {
@@ -65,8 +28,8 @@ export class User extends BaseModel {
       if (refreshToken) {
         account.refreshToken = refreshToken;
       }
-      await user.saveAll();
-      return { obj: user, created: false };
+      const obj = await user.saveAll();
+      return { obj, created: false };
     }
     const user = new User({
       ...props,
@@ -80,7 +43,3 @@ export class User extends BaseModel {
     return { obj: user, created: true };
   }
 }
-
-
-User.hasMany(EmailAccount, 'accounts', 'id', 'userId');
-EmailAccount.belongsTo(User, 'user', 'userId', 'id');

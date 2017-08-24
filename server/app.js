@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import jwt from 'express-jwt';
+import cors from 'cors';
 
 import logger from './config/logger';
 import loggerMiddleware from './utils/loggerMiddleware';
@@ -16,11 +17,16 @@ app.use(helmet())
   .use(bodyParser.urlencoded({ extended: true }))
   .use(cookieParser())
   .use(loggerMiddleware(logger))
+  .use(express.static('public'))
+  .use(cors())
   .use(jwt({
     secret: config.SECRET_KEY,
     audience: config.JWT.audience
   }).unless({
-    path: [/\/auth\/.*/]
+    path: [/\/auth\/.*/,
+           '/favicon.ico',
+           /\/email\/[^\/]+\/callback/,
+           /\/googled.+html/]
   }))
   .use(loadUser)
   .use('/', apiRouter)

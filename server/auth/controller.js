@@ -1,7 +1,9 @@
 import config from '../config/config';
-import { getGoogleClient } from '../provider/index';
-import { User, AuthProvider } from '../user/models';
+import { getGoogleClient, AuthProvider } from '../provider/index';
+import { User } from '../user/models';
 import * as jwt from './jwt';
+import EmailEvents from '../email/signals';
+import { emailAccountQueue } from '../email/tasks';
 
 const googleConfig = config.PROVIDER.google;
 
@@ -24,6 +26,14 @@ export default {
         provider: AuthProvider.GOOGLE.value
       });
       const msg = created ? 'New User Account created' : 'User logged in successfully';
+      if (created) {
+        console.log('Created New Account', obj.accounts[0].id);
+        emailAccountQueue.add('enableCompService', {
+          accountId: obj.accounts[0].id
+        });
+        EmailEvents.onAccountCreated.dispatch(obj.accounts[0]);
+      }
+
       req.logger.info(msg, {
         id: obj.id,
         firstName: obj.firstName,

@@ -1,5 +1,3 @@
-import reverse from 'lodash/reverse';
-
 export function hasOwnProperty(obj, key) {
   // https://github.com/eslint/eslint/issues/7071#issuecomment-245377924
   return {}.hasOwnProperty.call(obj, key);

@@ -18,6 +18,10 @@ export default class BaseConfig {
     password: process.env.RETHINK_DB_PASSWORD,
   };
 
+  static REDIS_OPTS = {
+    url: process.env.REDIS_URL || 'redis://127.0.0.1:6379/0'
+  };
+
   static LOG = {
     name: env === 'production' ? logName : `${logName}-${env}`,
     level: env === 'dev' ? 'debug' : 'info'
@@ -43,9 +47,13 @@ export default class BaseConfig {
       ],
       oauth2RedirectUrl: 'auth/google/complete/',
       projectId: 'ether-comp',
-      gmailPubSubTopic: 'projects/bitemailer-171607/topics/gmail_events'
+      pubSubTopic: 'projects/ether-comp/topics/incoming-email'
     }
   };
+
+  static getProviderConfig(provider) {
+    return this.PROVIDER[provider.toLowerCase()];
+  }
 
   static JWT = {
     audience: 'https://ether-comp.in',

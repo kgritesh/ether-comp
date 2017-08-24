@@ -27,6 +27,13 @@ export const Model = db => (modelCls) => {
 
   protoChain.forEach(proto => {
     // Copy all methods to the model prototype
+    const keys = Object.getOwnPropertyNames(proto.prototype);
+    keys.forEach((k) => {
+      if (k !== 'constructor') {
+        model.define(k, proto.prototype[k]);
+      }
+    });
+
     utils.copyOwnProperties(proto.prototype, model.prototype, {
       exclude: ['constructor']
     });
