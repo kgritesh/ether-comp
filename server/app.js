@@ -53,5 +53,9 @@ app.listen(config.PORT, () => {
   logger.info(`Ether Comp Server started. Listening on port: ${config.PORT}`);
 });
 
+process.on('unhandledRejection', function (reason, p) {
+  logger.error(reason, 'Unhandled Promise Rejection');
+});
+
 
 module.exports = app;

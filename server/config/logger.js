@@ -1,7 +1,8 @@
-import bunyan from 'bunyan';
 import Raven from 'raven';
+import bunyan from 'bunyan';
 import { SentryStream } from 'bunyan-sentry-stream';
 
+import BunyanLogger from '../utils/bunyanLogger';
 import config from './config';
 
 const streams = [
@@ -25,7 +26,7 @@ if (config.SENTRY.dsn) {
 }
 
 
-const logger = bunyan.createLogger({
+const logger = new BunyanLogger({
   name: config.LOG.name,
   level: config.LOG.level,
   streams,

@@ -24,7 +24,11 @@ export class GmailMessage {
   }
 
   get sender() {
-    return this.constructor.fromRegex.exec(this.headers.From)[1];
+    try {
+      return this.constructor.fromRegex.exec(this.headers.From)[1];
+    } catch (e) {
+      return this.headers.From;
+    }
   }
 
   get subject() {
@@ -37,6 +41,33 @@ export class GmailMessage {
 
   get date() {
     return this.headers.Date;
+  }
+
+  get emailId() {
+    return this.headers['Message-ID'];
+  }
+
+  get replyTo() {
+    return this.headers['In-Reply-To'];
+  }
+
+  get references() {
+    return this.headers.References;
+  }
+
+  isReply() {
+    return !!this.headers['In-Reply-To'];
+  }
+
+  logSerializer() {
+    return {
+      subject: this.subject,
+      id: this.id,
+      isReply: this.isReply(),
+      sender: this.sender,
+      replyTo: this.replyTo,
+      labelIds: this.labelIds
+    };
   }
 }
 
@@ -86,6 +117,7 @@ export default class GoogleClient {
     };
     if (labelIds && labelIds.length > 0) {
       options.resource.labelIds = labelIds;
+      options.resource.labelFilterAction = 'include';
     }
 
     return this._watchEmail(options);

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { UnauthorizedError } from 'express-jwt';
 
-import User from '../user/models';
+import { User } from '../user/models';
 import config from '../config/config';
 
 export function encodeUser(user) {

@@ -1,6 +1,8 @@
 import { getProviderClient } from '../provider/index';
 import config from '../config/config';
 
+import { emailCompContract } from '../blockchain/index';
+
 export default class BaseCompService {
 
   static PROVIDER = 'base';
@@ -13,13 +15,7 @@ export default class BaseCompService {
     this.account = account;
     this.client = getProviderClient(this.provider, this.account.getTokens());
     this.config = config.getProviderConfig(this.provider);
-    this.logger = logger.child({
-      provider: this.provider,
-      userId: account.userId,
-      accountId: account.id,
-      email: account.email,
-      active: account.active
-    });
+    this.logger = logger.child(account.logSerializer());
   }
 
   enableService() {
@@ -27,9 +23,19 @@ export default class BaseCompService {
 
   processNewEmails() {}
 
+  async initiateCompPayment(incomingEmail) {
+    try {
+      await emailCompContract.payBid(this.account.email, incomingEmail.id);
+    } catch (error) {
+      this.logger.error(error, { incomingEmail }, 'Failed to initiate comp payment');
+    }
+  }
+
   _registerEmailListener() {}
 
   _createLabels() {}
 
   _getNewEmails() {}
+
+
 }

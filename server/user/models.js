@@ -42,4 +42,16 @@ export class User extends BaseModel {
     await user.saveAll();
     return { obj: user, created: true };
   }
+
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  logSerializer() {
+    return {
+      id: this.id,
+      primaryEmail: this.primaryEmail,
+      fullName: this.fullName
+    };
+  }
 }

@@ -26,3 +26,8 @@ export function getProtoChain(cls) {
   }
   return chain;
 }
+
+export function getEmailDomain(email) {
+  const parts = email.split('@');
+  return parts[parts.length - 1];
+}

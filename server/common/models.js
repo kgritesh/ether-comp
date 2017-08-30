@@ -1,10 +1,14 @@
 import uuidv4 from 'uuid/v4';
+import ExtendableError from 'es6-error';
 
 import db from '../config/db';
 
 const type = db.type;
 const r = db.r;
 
+export class MultiRecordFound extends ExtendableError {}
+
+export class NoRecordFound extends ExtendableError {}
 
 export class BaseModel {
   static schema = {
@@ -40,4 +44,16 @@ export class BaseModel {
       created: !exists
     };
   }
+
+  static async filterOne(filter) {
+    const objs = await this.filter(filter).run();
+    if (objs.length === 1) {
+      return objs[0];
+    } else if (objs.length > 1) {
+      throw new MultiRecordFound('More than 1 matching record found');
+    } else {
+      throw new NoRecordFound('No matching record found');
+    }
+  }
+
 }

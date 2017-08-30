@@ -15,7 +15,7 @@ const blockResponse = fs.readFileSync('common/templates/blockResponse.txt', 'utf
 
 
 export class EmailStatus extends Enum {}
-EmailStatus.initEnum(['BLOCKED', 'BID', 'REPLIED']);
+EmailStatus.initEnum(['BLOCKED', 'BID', 'REPLIED', 'PAID', 'CANCELLED']);
 
 
 @Model(db)
@@ -30,34 +30,34 @@ export class EmailAccount extends BaseModel {
     minBid: type.number().default(0),
     historyId: type.string(),
     watchExpiry: type.date(),
-
     // Auto Response for blocked email
     responseTemplate: type.string().default(blockResponse),
 
     // Label to apply to email which are blocked by ether-comp
     blockLabel: type.object().schema({
       name: type.string().default('block'),
-      labelId: type.string()
+      id: type.string()
     }).default({}),
 
     // Label to apply to email which people have paid for
     compLabel: type.object().schema({
       name: type.string().default('paid'),
-      labelId: type.string()
+      id: type.string()
     }).default({}),
 
     inboxLabel: type.object().schema({
       name: type.string(),
-      labelId: type.string()
+      id: type.string()
     }).default({}),
 
     outboxLabel: type.object().schema({
       name: type.string(),
-      labelId: type.string()
-    }).default({})
+      id: type.string()
+    }).default({}),
+    etherAccount: type.string()
   }
 
-  static indices = ['email'];
+  static indices = ['email', 'userId'];
 
   getTokens() {
     return {
@@ -76,6 +76,16 @@ export class EmailAccount extends BaseModel {
       throw new Error(`No email account found with email id :${email}`);
     }
   }
+
+  logSerializer() {
+    return {
+      id: this.id,
+      provider: this.provider,
+      active: this.active,
+      userId: this.userId,
+      email: this.email
+    };
+  }
 }
 
 User.hasMany(EmailAccount, 'accounts', 'id', 'userId');
@@ -86,12 +96,32 @@ EmailAccount.belongsTo(User, 'user', 'userId', 'id');
 export class IncomingEmail extends BaseModel {
   static schema = {
     emailAccountId: type.string().uuid('4').required(),
+    // This is the actual id inside the email header
+    emailId: type.string().required(),
+    // This is the provider id for the email.
     messageId: type.string().required(),
+    threadId: type.string(),
     senderEmail: type.string().email().required(),
+    senderAddr: type.string(),
     status: type.string().required()
       .enum(EmailStatus.names)
       .default(EmailStatus.BLOCKED.name),
     bid: type.number(),
-    expiry: type.date().default(() => moment().add(7, 'days').toDate())
+    expiry: type.date().default(() => moment().add(7, 'days').toDate()),
+    replyMessageId: type.string()
+  }
+  static indices = ['emailAccountId', 'messageId', 'senderEmail', 'emailId'];
+
+  logSerializer() {
+    return {
+      id: this.id,
+      messageId: this.messageId,
+      status: this.status,
+      senderEmail: this.senderEmail,
+      accountId: this.emailAccountId
+    };
   }
 }
+
+EmailAccount.hasMany(IncomingEmail, 'emails', 'id', 'emailAccountId');
+IncomingEmail.belongsTo(EmailAccount, 'account', 'emailAccountId', 'id');
