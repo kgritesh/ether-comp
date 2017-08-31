@@ -74,7 +74,7 @@ emailQueue.on('failed', (job, err) => {
 
 emailBidQueue.process(BID_CREATED, async (job) => {
   const event = JSON.parse(job.data.event);
-  const { senderAddr, receiver, messageId, bid, expiry } = event.args;
+  const { senderAddr, receiver, messageId, bid, bidOn, expiry } = event.args;
   logger.debug(event.args, 'Handle Bid Creation');
   const incomingEmail = await IncomingEmail.get(messageId)
     .getJoin({ account: true }).run();
@@ -96,6 +96,7 @@ emailBidQueue.process(BID_CREATED, async (job) => {
   incomingEmail.senderAddr = senderAddr;
   incomingEmail.bid = parseInt(bid, 10);
   incomingEmail.expiry = parseInt(expiry, 10);
+  IncomingEmail.bidOn = new Date(parseInt(bidOn, 10) * 1000);
   incomingEmail.status = EmailStatus.BID.name;
   await incomingEmail.save();
   logger.info({ receiver, messageId }, 'Updated status for message to bid');

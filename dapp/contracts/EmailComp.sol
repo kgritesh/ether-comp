@@ -16,7 +16,9 @@ contract EmailComp is owned {
     string receiver;
     string messageId;
     uint256 bid;
-    uint expiry;
+    uint256 bidOn;
+    bool cancellable;
+    uint expiry;  // in days
   }
 
   mapping(string => address) receiverMap;
@@ -28,6 +30,7 @@ contract EmailComp is owned {
     string receiver,
     string messageId,
     uint256 bid,
+    uint256 bidOn,
     uint expiry
   );
 
@@ -36,6 +39,10 @@ contract EmailComp is owned {
     string messageId
   );
 
+  event BidExpired(
+    string receiver,
+    string messageId
+  );
 
   event CompPaid(
     string receiver,
@@ -63,42 +70,65 @@ contract EmailComp is owned {
    mapping(string => Bid) receiverBids = bidMap[receiver];
    Bid memory existing = receiverBids[messageId];
    return sha3(existing.messageId) == sha3(messageId);
- }
+  }
 
- function sendBid(string receiver, string messageId, uint expiry) payable {
-   require(checkExistingReceiver(receiver));
-   require(!checkExistingBid(receiver, messageId));
-   Bid memory bid  = Bid(msg.sender, receiver, messageId, msg.value, expiry);
-   bidMap[receiver][messageId] = bid;
-   BidCreated(msg.sender, receiver, messageId, msg.value, expiry);
- }
+  function checkBidExpiry(Bid bid) {
+    require(now > bid.bidOn + (expiry * 1 days));
+  }
 
- function getBid(string receiver, string messageId) returns (uint256, uint) {
-   require(checkExistingBid(receiver, messageId));
-   Bid storage bid = bidMap[receiver][messageId];
-   return (bid.bid, bid.expiry);
- }
+  function sendBid(string receiver, string messageId, uint expiry) external payable {
+    require(checkExistingReceiver(receiver));
+    require(!checkExistingBid(receiver, messageId));
+    Bid memory bid  = Bid({
+      senderAddr: msg.sender,
+          receiver: receiver,
+          messageId: messageId,
+          bid: msg.value,
+          bidOn: now,
+          cancellable: true,
+          expiry: expiry
+          });
+    bidMap[receiver][messageId] = bid;
+    BidCreated(msg.sender, receiver, messageId, msg.value, now, expiry);
+  }
 
- function cancelBid(string receiver, string messageId) {
-   require(checkExistingBid(receiver, messageId));
-   Bid storage bid = bidMap[receiver][messageId];
-   require(msg.sender == bid.senderAddr || msg.sender == owner );
-   delete bidMap[receiver][messageId];
-   BidCancelled(receiver, messageId);
- }
+  function getBid(string receiver, string messageId) returns (uint256, uint) {
+    require(checkExistingBid(receiver, messageId));
+    Bid storage bid = bidMap[receiver][messageId];
+    return (bid.bid, bid.expiry);
+  }
 
- function payBid(string receiver, string messageId) onlyOwner {
-   require(checkExistingBid(receiver, messageId));
-   Bid storage emailBid = bidMap[receiver][messageId];
-   uint256 bid = emailBid.bid;
-   address receiverAddr = receiverMap[receiver];
-   delete bidMap[receiver][messageId];
-   if (!receiverAddr.send(bid)) {
-     bidMap[receiver][messageId] = emailBid;
-     CompPaymentFailed(receiver, messageId, receiverAddr, bid);
-     return;
-   }
-   CompPaid(receiver, messageId, receiverAddr, bid);
- }
+  function cancelBid(string receiver, string messageId) {
+    require(checkExistingBid(receiver, messageId));
+    Bid storage bid = bidMap[receiver][messageId];
+    require(msg.sender == bid.senderAddr || msg.sender == owner );
+    require(bid.cancellable);
+    delete bidMap[receiver][messageId];
+    BidCancelled(receiver, messageId);
+  }
+
+  function payBid(string receiver, string messageId) onlyOwner {
+    require(checkExistingBid(receiver, messageId));
+    Bid storage emailBid = bidMap[receiver][messageId];
+    address receiverAddr = receiverMap[receiver];
+
+    // Check if bid expired
+    if (checkBidExpiry(emailBid)) {
+      delete bidMap[receiver][messageId];
+      BidExpired(receiver, messageId);
+      return;
+    }
+
+    uint256 bid = emailBid.bid;
+    emailBid.cancellable = false;
+
+    if (!receiverAddr.send(bid)) {
+      // Payment Failed
+      CompPaymentFailed(receiver, messageId, receiverAddr, bid);
+      return;
+    }
+    delete bidMap[receiver][messageId];
+    CompPaid(receiver, messageId, receiverAddr, bid);
+  }
 
 }

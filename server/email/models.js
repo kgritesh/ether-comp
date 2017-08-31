@@ -15,7 +15,10 @@ const blockResponse = fs.readFileSync('common/templates/blockResponse.txt', 'utf
 
 
 export class EmailStatus extends Enum {}
-EmailStatus.initEnum(['BLOCKED', 'BID', 'REPLIED', 'PAID', 'CANCELLED']);
+EmailStatus.initEnum([
+  'BLOCKED', 'BID', 'REPLIED', 'PAID',
+  'CANCELLED', 'EXPIRED', 'PAYMENT_FAILED'
+]);
 
 
 @Model(db)
@@ -106,8 +109,13 @@ export class IncomingEmail extends BaseModel {
     status: type.string().required()
       .enum(EmailStatus.names)
       .default(EmailStatus.BLOCKED.name),
+
     bid: type.number(),
-    expiry: type.date().default(() => moment().add(7, 'days').toDate()),
+    // Expiry in days
+    expiry: type.number().default(7),
+    bidOn: type.date(),
+
+
     replyMessageId: type.string()
   }
   static indices = ['emailAccountId', 'messageId', 'senderEmail', 'emailId'];
