@@ -17,8 +17,9 @@ export default {
 
   async completeGoogleAuth(req, res) {
     const googleClient = getGoogleClient();
+    const { authCode } = req.body;
     try {
-      const { user, accessToken, refreshToken } = await googleClient.getUser(req.query.code);
+      const { user, accessToken, refreshToken } = await googleClient.getUser(authCode);
       const { obj, created } = await User.createOrUpdateAccount({
         ...user,
         accessToken,
@@ -41,7 +42,12 @@ export default {
         primaryEmail: obj.primaryEmail
       });
       res.json({
-        userId: obj.id,
+        user: {
+          id: obj.id,
+          firstName: obj.firstName,
+          lastName: obj.lastName,
+          primaryEmail: obj.primaryEmail
+        },
         created,
         token: jwt.encodeUser(obj)
       });

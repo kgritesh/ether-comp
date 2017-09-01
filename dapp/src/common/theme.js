@@ -6,6 +6,6 @@ export const mainAppTheme = {
 
 export const registrationTheme = {
   container: {
-    backgroundColor: '#00bcd4 !important'
+    backgroundColor: '#43525A !important'
   }
 };

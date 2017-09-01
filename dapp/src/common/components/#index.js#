@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import glamorous from 'glamorous';
-import { Row, Col, Card, CardBlock } from 'reactstrap';
 
 export const Container = glamorous.div({
   display: 'flex',
@@ -34,27 +32,4 @@ export const RegistrationHeader = () => (
   </LogoContainer>
 );
 
-export const CentralCard = ({ children }) => (
-  <CentralDiv>
-    <Row className="justify-content-md-center w-100">
-      <Col sm="10" lg="4">
-        <Card
-          style={{
-            minHeight: 300,
-            display: 'flex',
-            flex: 1
-          }}
-        >
-          <RegistrationHeader />
-          <CardBlock style={{ background: '#E5EFFB' }}>
-            {children}
-          </CardBlock>
-        </Card>
-      </Col>
-    </Row>
-  </CentralDiv>
-);
-
-CentralCard.PropTypes = {
-  children: PropTypes.object.isRequired
-};
+export const Cen

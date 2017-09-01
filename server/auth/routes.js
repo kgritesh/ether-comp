@@ -5,6 +5,6 @@ import controller from './controller';
 const authRouter = express.Router();
 
 authRouter.post('/google/start/', controller.initGoogleAuth);
-authRouter.get('/google/complete/', controller.completeGoogleAuth);
+authRouter.post('/google/complete/', controller.completeGoogleAuth);
 
 export default authRouter;

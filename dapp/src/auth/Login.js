@@ -1,59 +1,65 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Div } from 'glamorous';
-import Typography from 'material-ui/Typography';
 import { connect } from 'react-redux';
-import Card, { CardContent } from 'material-ui/Card';
-import Button from 'material-ui/Button';
+import { Button, Row, Col } from 'reactstrap';
 
+import { CentralCard } from '../common/components/index';
 import * as actions from './actions';
-import { CenterCard, LogoTitle } from '../common/components/index';
+
 
 const styles = {
   logo: {
     color: 'white'
   },
-  card: {
-    width: 300,
-    minHeight: 200,
-    marginTop: 10,
+  container: {
     display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10
+    justifyContent: 'center'
   },
-  textLabel: {
-    color: 'rgba(0, 0, 0, 0.7)'
+
+  card: {
+    minHeight: 300,
+    display: 'flex',
+    flex: 1
+  },
+
+  signupText: {
+    margin: '20px',
+    color: '#3B4648'
   }
 };
 
-class _Login extends Component {
-  static propTypes = {
-    login: PropTypes.func.isRequired
-  }
-
-  render() {
-    return (
-      <CenterCard>
-        <LogoTitle />
-        <Card style={styles.card}>
-          <CardContent>
-            <Typography type="body1" component="p" style={styles.textLabel}>
-              Register/Login with your email account
-            </Typography>
-            <Div display="flex" flexDirection="column" flex="1" marginTop="10">
-              <Button raised color="primary" onClick={() => this.props.login('google')}>
-                Login with Google
-              </Button>
-            </Div>
-          </CardContent>
-        </Card>
-      </CenterCard>
-    );
-  }
+function _Login({ login }) {
+  return (
+    <CentralCard>
+      <div>
+        <Row
+          className="justify-content-center m-10"
+          style={styles.signupText}
+        >
+          <Col xs="8">
+            <div className="text-center"> SIGNUP / LOGIN WITH </div>
+          </Col>
+        </Row>
+        <Row className="justify-content-center">
+          <Col xs="10" className="align-items-center">
+            <Button
+              color="primary"
+              className="text-center w-100"
+              onClick={() => login('google')}
+            >
+              GOOGLE
+            </Button>
+          </Col>
+        </Row>
+      </div>
+    </CentralCard>
+  );
 }
 
+_Login.propTypes = {
+  login: PropTypes.func.isRequired
+};
 
 const mapDispatchToProps = dispatch => ({
   login: (provider) => dispatch(actions.initiateAuth(provider))

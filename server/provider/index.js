@@ -26,7 +26,7 @@ AuthProvider.initEnum({
 export const AuthProviderList = AuthProvider.names;
 
 export function getGoogleClient({ accessToken = null, refreshToken = null } = {}) {
-  const redirectUrl = urljoin(config.BASE_URL, googleConfig.oauth2RedirectUrl);
+  const redirectUrl = googleConfig.oauth2RedirectUrl;
   return new GoogleClient(
     googleConfig.clientId, googleConfig.clientSecret, redirectUrl,
     accessToken, refreshToken);

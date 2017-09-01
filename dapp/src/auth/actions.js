@@ -1,9 +1,11 @@
+import Cookie from 'js-cookie';
 import { createAction } from 'redux-actions';
-import { push } from  'react-router-redux';
 
+import config from '../config/config';
 import * as actionTypes from './actionTypes';
 import * as api from '../common/api';
 import { APIRoutes } from '../constants/routes';
+import { showSpinner, hideSpinner } from '../utils/spinner/actions';
 
 export const startAuthRequest = createAction(actionTypes.START_AUTH_REQUEST);
 export const startAuthSuccess = createAction(actionTypes.START_AUTH_SUCCESS);
@@ -27,6 +29,30 @@ export function initiateAuth(provider) {
     } catch (err) {
       console.error(err);
       dispatch(startAuthFailure(err));
+    }
+  };
+}
+
+export function completeGoogleAuth(payload) {
+  return async function (dispatch) {
+    dispatch(showSpinner('auth.loading'));
+    dispatch(completeAuthRequest(payload));
+    try {
+      const resp = await api.request(APIRoutes.completeAuth, {
+        method: 'POST',
+        urlParams: { provider: 'google' },
+        requireAuth: false,
+        payload
+      });
+      Cookie.set(config.JWT.cookie, resp.token, {
+        domain: config.JWT.domain,
+        expiry: config.JWT.expiry
+      });
+      dispatch(completeAuthSuccess(resp));
+      dispatch(hideSpinner('auth.loading'));
+    } catch (err) {
+      console.error(err);
+      dispatch(completeAuthFailure(err));
     }
   };
 }
