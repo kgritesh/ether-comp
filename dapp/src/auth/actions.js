@@ -7,6 +7,10 @@ import * as api from '../common/api';
 import { APIRoutes } from '../constants/routes';
 import { showSpinner, hideSpinner } from '../utils/spinner/actions';
 
+export const loginRequest = createAction(actionTypes.LOGIN_REQUEST);
+export const loginSuccess = createAction(actionTypes.LOGIN_SUCCESS);
+export const loginFailure = createAction(actionTypes.LOGIN_FAILURE);
+
 export const startAuthRequest = createAction(actionTypes.START_AUTH_REQUEST);
 export const startAuthSuccess = createAction(actionTypes.START_AUTH_SUCCESS);
 export const startAuthFailure = createAction(actionTypes.START_AUTH_FAILURE);
@@ -14,6 +18,23 @@ export const startAuthFailure = createAction(actionTypes.START_AUTH_FAILURE);
 export const completeAuthRequest = createAction(actionTypes.COMPLETE_AUTH_REQUEST);
 export const completeAuthSuccess = createAction(actionTypes.COMPLETE_AUTH_SUCCESS);
 export const completeAuthFailure = createAction(actionTypes.COMPLETE_AUTH_FAILURE);
+
+export function login() {
+  return async function (dispatch) {
+    dispatch(showSpinner('auth.login'));
+    dispatch(loginRequest());
+    try {
+      const resp = await api.request(APIRoutes.login, {
+        method: 'POST'
+      });
+      dispatch(loginSuccess(resp));
+    } catch (err) {
+      console.error(err);
+      dispatch(loginFailure(err));
+    }
+
+  };
+}
 
 export function initiateAuth(provider) {
   return async function (dispatch) {

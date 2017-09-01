@@ -54,4 +54,5 @@ export class User extends BaseModel {
       fullName: this.fullName
     };
   }
+
 }

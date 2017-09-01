@@ -1,6 +1,7 @@
 import config from '../config/config';
 import { getGoogleClient, AuthProvider } from '../provider/index';
 import { User } from '../user/models';
+import { serializeUser } from '../user/serializers';
 import * as jwt from './jwt';
 import EmailEvents from '../email/signals';
 import { emailAccountQueue } from '../email/tasks';
@@ -8,6 +9,16 @@ import { emailAccountQueue } from '../email/tasks';
 const googleConfig = config.PROVIDER.google;
 
 export default {
+
+  async login(req, res, next) {
+    const user = req.user;
+    try {
+      res.json(await serializeUser(user));
+    } catch (error) {
+      req.logger(error, { user }, 'Unable to fetch accounts for the user');
+      next(error);
+    }
+  },
 
   initGoogleAuth(req, res) {
     const googleClient = getGoogleClient();
@@ -41,13 +52,9 @@ export default {
         lastName: obj.lastName,
         primaryEmail: obj.primaryEmail
       });
+      const userJson = await serializeUser(obj);
       res.json({
-        user: {
-          id: obj.id,
-          firstName: obj.firstName,
-          lastName: obj.lastName,
-          primaryEmail: obj.primaryEmail
-        },
+        user: userJson,
         created,
         token: jwt.encodeUser(obj)
       });

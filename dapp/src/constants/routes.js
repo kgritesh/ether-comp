@@ -6,6 +6,8 @@ export const AppRoutes = {
     authComplete: '/auth/google/complete/'
   },
   home: '/',
+  userProfile: '/',
+  emailAccounts: '/accounts',
   logout: '/auth/logout'
 };
 

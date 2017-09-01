@@ -14,7 +14,7 @@ export default function reducer(state = getInitialState(), action) {
     case actionTypes.SHOW_SPINNER:
       return state.setIn(['instances', instanceKey, 'visible'], true);
     case actionTypes.HIDE_SPINNER:
-      return state.setIn(['instances', instanceKey, 'visible'], true);
+      return state.setIn(['instances', instanceKey, 'visible'], false);
     default:
       return state;
   }

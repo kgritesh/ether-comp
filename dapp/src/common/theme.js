@@ -1,6 +1,8 @@
 export const mainAppTheme = {
   container: {
-    backgroundColor: '#f5f7fa'
+    backgroundColor: '#E9F0F5',
+    headerColor: '#43525A',
+    sidebarColor: '#43525A'
   }
 };
 

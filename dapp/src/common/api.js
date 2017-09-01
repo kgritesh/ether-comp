@@ -2,6 +2,7 @@ import urljoin from 'url-join';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
+import Cookie from 'js-cookie';
 
 import * as utils from '../utils/utils';
 import { APIRoutes } from '../constants/routes';
@@ -10,8 +11,9 @@ import { HttpError } from './error';
 
 
 export function getAuthHeaders() {
+  const jwt = Cookie.get(config.JWT.cookie);
   return {
-    Authorization: 'Bearer'
+    Authorization: `Bearer ${jwt}`
   };
 }
 

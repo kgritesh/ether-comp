@@ -23,10 +23,11 @@ app.use(helmet())
     secret: config.SECRET_KEY,
     audience: config.JWT.audience
   }).unless({
-    path: [/\/auth\/.*/,
-           '/favicon.ico',
-           /\/email\/[^\/]+\/callback/,
-           /\/googled.+html/]
+    path: [
+      /\/auth\/(?!login).*/,
+      '/favicon.ico',
+      /\/email\/[^/]+\/callback/,
+      /\/googled.+html/]
   }))
   .use(loadUser)
   .use('/', apiRouter)
