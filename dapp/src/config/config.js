@@ -12,4 +12,5 @@ switch (projectEnv) {
 }
 
 config.PROJECT_ENV = projectEnv;
+
 export default config;

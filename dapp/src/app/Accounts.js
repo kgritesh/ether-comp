@@ -1,8 +1,7 @@
 import React from 'react';
 import { Card, CardBlock } from 'reactstrap';
-import glamorous from 'glamorous';
 
-import { FlexColumn, FlexRow, Divider, Icon, SectionHeader, Flex1 } from '../common/components/index';
+import { FlexColumn, FlexRow, SectionHeader, Flex1 } from '../common/components/index';
 
 export default function Accounts() {
   return (

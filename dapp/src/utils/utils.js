@@ -21,3 +21,13 @@ export function encodeQueryString(obj) {
 export function immutableToJS(obj) {
   return Iterable.isIterable(obj) ? obj.toJS() : obj;
 }
+
+
+export function onWindowLoadEventListener() {
+  if (document.readyState === 'complete') {
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    window.addEventListener('load', () => resolve());
+  });
+}

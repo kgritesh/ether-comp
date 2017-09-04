@@ -84,10 +84,10 @@ Icon.propTypes = {
   className: PropTypes.string,
 };
 
-export const CentralCard = ({ children, ...props }) => (
+export const CentralCard = ({ children, sm = '10', lg = '4', xs = '12', ...props }) => (
   <CentralDiv {...props} >
     <Row className="justify-content-md-center w-100">
-      <Col sm="10" lg="4">
+      <Col sm={sm} lg={lg} xs={xs}>
         <Card
           style={{
             minHeight: 300,
@@ -96,7 +96,7 @@ export const CentralCard = ({ children, ...props }) => (
           }}
         >
           <RegistrationHeader />
-          <CardBlock style={{ background: '#E5EFFB' }}>
+          <CardBlock style={{ background: '#E5EFFB', padding: 10 }}>
             {children}
           </CardBlock>
         </Card>

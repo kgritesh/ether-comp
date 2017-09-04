@@ -28,6 +28,7 @@
     "import/prefer-default-export": 0,
     "padded-blocks": 0,
     "react/jsx-filename-extension": 0,
-    "import/no-extraneous-dependencies": 0
+    "import/no-extraneous-dependencies": 0,
+    "no-this-before-super": 0
   }
 }

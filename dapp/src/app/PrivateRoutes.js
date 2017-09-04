@@ -28,7 +28,7 @@ const Content = glamorous.div({
   marginLeft: props.sidebarOpened ? '270px' : '15px'
 }));
 
-function _MainAppFlow({ toggleSidebar, sidebarOpened }) {
+function _PrivateRoutes({ toggleSidebar, sidebarOpened }) {
   return (
     <ThemeProvider theme={themes.mainAppTheme}>
       <Container >
@@ -43,7 +43,7 @@ function _MainAppFlow({ toggleSidebar, sidebarOpened }) {
   );
 }
 
-_MainAppFlow.propTypes = {
+_PrivateRoutes.propTypes = {
   toggleSidebar: PropTypes.func.isRequired,
   sidebarOpened: PropTypes.bool.isRequired
 };
@@ -56,5 +56,5 @@ const mapDispatchToProps = dispatch => ({
   toggleSidebar: () => dispatch(actions.toggleSidebar())
 });
 
-const MainAppFlow = connect(mapStateToProps, mapDispatchToProps)(_MainAppFlow);
-export default MainAppFlow;
+const PrivateRoutes = connect(mapStateToProps, mapDispatchToProps)(_PrivateRoutes);
+export default PrivateRoutes;

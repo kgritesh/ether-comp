@@ -72,8 +72,8 @@ contract EmailComp is owned {
    return sha3(existing.messageId) == sha3(messageId);
   }
 
-  function checkBidExpiry(Bid bid) {
-    require(now > bid.bidOn + (expiry * 1 days));
+  function checkBidExpiry(Bid bid)  internal returns(bool) {
+    return now > bid.bidOn + (bid.expiry * 1 days);
   }
 
   function sendBid(string receiver, string messageId, uint expiry) external payable {

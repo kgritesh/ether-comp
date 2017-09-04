@@ -32,7 +32,7 @@ export function login() {
       console.error(err);
       dispatch(loginFailure(err));
     }
-
+    dispatch(hideSpinner('auth.login'));
   };
 }
 

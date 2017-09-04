@@ -1,0 +1,7 @@
+export const VALIDATE_EMAIL_REQUEST = 'emailComp.VALIDATE_EMAIL_REQUEST';
+export const VALIDATE_EMAIL_SUCCESS = 'emailComp.VALIDATE_EMAIL_SUCCESS';
+export const VALIDATE_EMAIL_FAILURE = 'emailComp.VALIDATE_EMAIL_FAILURE';
+
+export const SEND_BID_REQUEST = 'emailComp.SEND_BID_REQUEST';
+export const SEND_BID_SUCCESS = 'emailComp.SEND_BID_SUCCESS';
+export const SEND_BID_FAILURE = 'emailComp.SEND_BID_FAILURE';

@@ -4,6 +4,7 @@ import { routerReducer } from 'react-router-redux';
 
 import authReducer from '../auth/reducers';
 import spinnerReducer from '../utils/spinner/reducers';
+import emailCompReducer from '../emailComp/reducers';
 import * as actionTypes from './actionTypes';
 
 function initialLayoutState() {
@@ -20,11 +21,13 @@ function layoutReducer(state = initialLayoutState(), action) {
   return state;
 }
 
+
 const rootReducers = combineReducers({
   layout: layoutReducer,
   router: routerReducer,
   auth: authReducer,
-  spinners: spinnerReducer
+  spinners: spinnerReducer,
+  emailComp: emailCompReducer
 });
 
 export default rootReducers;

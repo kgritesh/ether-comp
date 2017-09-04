@@ -26,6 +26,7 @@ app.use(helmet())
     path: [
       /\/auth\/(?!login).*/,
       '/favicon.ico',
+      /\/email\/[^/]+\/validate/,
       /\/email\/[^/]+\/callback/,
       /\/googled.+html/]
   }))

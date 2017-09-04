@@ -21,7 +21,7 @@ _Spinner.defaultProps = {
 
 
 const mapStateToProps = (state, ownProps) => ({
-  visible: selectors.isVisible(state, ownProps)
+  visible: ownProps.visible ? ownProps.visible : selectors.isVisible(state, ownProps)
 });
 
 const Spinner = connect(mapStateToProps)(_Spinner);

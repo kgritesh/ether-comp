@@ -8,4 +8,8 @@ export default class BaseConfig {
     domain: '127.0.0.1',
     expiry: 7 // days
   };
+
+  static ETHEREUM = {
+    providerUrl: 'http://localhost:8545'
+  };
 }
