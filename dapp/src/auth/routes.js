@@ -1,5 +1,6 @@
 export const APIRoutes = {
   login: '/auth/login/',
   startAuth: '/auth/:provider/start',
-  completeAuth: '/auth/:provider/complete'
+  completeAuth: '/auth/:provider/complete',
+  updateUser: '/user/:id/'
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Switch, withRouter, Route } from 'react-router-dom';
+import { NotificationContainer } from 'react-notifications';
 
 import { AppRoutes } from '../constants/routes';
 import AuthRoute from '../auth/AuthRoute';
@@ -33,6 +34,7 @@ class _App extends React.Component {
             <AuthRoute path="/" component={PrivateRoutes} />
           </Switch>
           : null }
+        <NotificationContainer />
       </div>
     );
   }

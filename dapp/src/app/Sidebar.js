@@ -33,10 +33,15 @@ const SidebarItem = glamorous(NavLink)({
   padding: 10,
   margin: 20,
   display: 'block',
+  textDecoration: 'none',
   ':hover': {
     textDecoration: 'none',
     color: 'white',
     background: '#273135'
+  },
+
+  ':visited': {
+    textDecoration: 'none'
   }
 });
 
@@ -72,7 +77,7 @@ export default function Sidebar({ sidebarOpened, ...props }) {
                   <SidebarItem
                     key={item.path}
                     to={item.path}
-                    activeClassName={activeItem}
+                    activeClassName={`${activeItem}`}
                     exact
                   >
                     {item.title}

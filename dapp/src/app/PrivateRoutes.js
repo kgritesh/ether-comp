@@ -7,8 +7,10 @@ import glamorous, { ThemeProvider } from 'glamorous';
 
 import { AppRoutes } from '../constants/routes';
 import Home from './Home';
+import UserProfile from '../auth/UserProfile';
 import Accounts from './Accounts';
 
+import { getUser } from '../auth/selectors';
 import { Container } from '../common/components/index';
 import NavHeader from '../app/NavHeader';
 import Sidebar from '../app/Sidebar';
@@ -28,14 +30,14 @@ const Content = glamorous.div({
   marginLeft: props.sidebarOpened ? '270px' : '15px'
 }));
 
-function _PrivateRoutes({ toggleSidebar, sidebarOpened }) {
+function _PrivateRoutes({ toggleSidebar, sidebarOpened, user }) {
   return (
     <ThemeProvider theme={themes.mainAppTheme}>
       <Container >
-        <NavHeader toggleSidebar={toggleSidebar} />
+        <NavHeader toggleSidebar={toggleSidebar} firstName={user.firstName} />
         <Sidebar sidebarOpened={sidebarOpened} />
         <Content sidebarOpened={sidebarOpened}>
-          <Route path={AppRoutes.home} exact component={Home} />
+          <Route path={AppRoutes.home} exact component={UserProfile} />
           <Route path={AppRoutes.emailAccounts} exact component={Accounts} />
         </Content>
       </Container>
@@ -49,7 +51,8 @@ _PrivateRoutes.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  sidebarOpened: state.layout.get('sidebarOpened')
+  sidebarOpened: state.layout.get('sidebarOpened'),
+  user: getUser(state)
 });
 
 const mapDispatchToProps = dispatch => ({

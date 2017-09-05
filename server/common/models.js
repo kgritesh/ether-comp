@@ -56,4 +56,11 @@ export class BaseModel {
     }
   }
 
+  update(values) {
+    Object.keys(values).forEach(key => {
+      this[key] = values[key];
+    });
+    this.save();
+  }
+
 }

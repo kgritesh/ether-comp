@@ -6,7 +6,8 @@ export async function serializeUser(user) {
   const accounts = await EmailAccount.filter({ userId: user.id }).run();
   return {
     id: user.id,
-    fullName: user.fullName,
+    firstName: user.firstName,
+    lastName: user.lastName,
     primaryEmail: user.primaryEmail,
     accounts: accounts.map(acc => serializeAccount(acc))
   };

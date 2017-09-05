@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import glamorous from 'glamorous';
+import capitalize from 'lodash/capitalize';
 
 import { FlexRow, Logo, Icon, Flex1 } from '../common/components/index';
 
@@ -21,7 +22,7 @@ const HeaderContainer = glamorous.div({
 });
 
 
-export default function NavHeader({ toggleSidebar, ...props}) {
+export default function NavHeader({ toggleSidebar, firstName, ...props}) {
   return (
     <HeaderContainer {...props}>
       <FlexRow className="h-100">
@@ -34,7 +35,7 @@ export default function NavHeader({ toggleSidebar, ...props}) {
         <Logo style={{ margin: '0 20px' }} />
         <FlexRow className={`${Flex1} justify-content-end`} style={{ margin: '0 30px' }}>
           <Icon font="home" size="lg" style={{ margin: '0 20px' }} onClick={() => console.log('Home is Clicked')} />
-          <div className="m-0" style={{ fontSize: '1.1rem' }}> Welcome Ritesh </div>
+            <div className="m-0" style={{ fontSize: '1.1rem' }}>{`Welcome ${capitalize(firstName)}`}</div>
         </FlexRow>
 
       </FlexRow>
@@ -43,5 +44,6 @@ export default function NavHeader({ toggleSidebar, ...props}) {
 }
 
 NavHeader.propTypes = {
-  toggleSidebar: PropTypes.func.isRequired
+  toggleSidebar: PropTypes.func.isRequired,
+  firstName: PropTypes.string
 };

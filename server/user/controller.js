@@ -1,6 +1,7 @@
 import { EmailAccount } from '../email/models';
 import { permissionDenied } from '../common/errors';
 import { emailAccountQueue } from '../email/tasks';
+import { serializeUser } from './serializers';
 
 export default {
   async setEtherAccount(req, res, next) {
@@ -25,6 +26,17 @@ export default {
       emailAccountQueue.add('setEtherAccount', {
         email, etherAccount
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async updateUser(req, res, next) {
+    try {
+      const body = req.body;
+      await req.user.update(body);
+      const userJson = await serializeUser(req.user);
+      res.json(userJson);
     } catch (error) {
       next(error);
     }

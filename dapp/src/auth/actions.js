@@ -1,5 +1,6 @@
 import Cookie from 'js-cookie';
 import { createAction } from 'redux-actions';
+import { NotificationManager } from 'react-notifications';
 
 import config from '../config/config';
 import * as actionTypes from './actionTypes';
@@ -75,5 +76,29 @@ export function completeGoogleAuth(payload) {
       console.error(err);
       dispatch(completeAuthFailure(err));
     }
+  };
+}
+
+export const updateUserRequest = createAction(actionTypes.UPDATE_USER_REQUEST);
+export const updateUserSuccess = createAction(actionTypes.UPDATE_USER_SUCCESS);
+export const updateUserFailure = createAction(actionTypes.UPDATE_USER_FAILURE);
+
+export function updateUser(payload) {
+  return async function (dispatch) {
+    dispatch(showSpinner('app.updateUser'));
+    dispatch(updateUserRequest());
+    try {
+      const resp = await api.request(APIRoutes.updateUser, {
+        method: 'POST',
+        payload,
+        urlParams: { id: payload.id }
+      });
+      dispatch(updateUserSuccess(resp));
+      NotificationManager.info('User Profile Updated');
+    } catch (err) {
+      NotificationManager.error('Failed to update user profile');
+      dispatch(updateUserFailure(err));
+    }
+    dispatch(hideSpinner('app.updateUser'));
   };
 }

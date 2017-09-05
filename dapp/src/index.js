@@ -5,6 +5,7 @@ import { ConnectedRouter } from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.css';
+import 'react-notifications/lib/notifications.css';
 
 import './index.css';
 import App from './app/App';
