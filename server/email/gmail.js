@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import BaseCompService from './service';
 import { AuthProvider } from '../provider/index';
 import { IncomingEmail, EmailStatus } from './models';
+import config from '../config/config';
 
 export default class GmailService extends BaseCompService {
 
@@ -74,24 +75,23 @@ export default class GmailService extends BaseCompService {
     return null;
   }
 
-  async processNewEmail(message) {
+  async processNewEmail({ id, labelIds }) {
     const { account } = this;
     try {
-      const email = await this.client.getMessage(message.id);
-      this.logger.debug({ email },
+      const message = await this.client.getMessage(id);
+      this.logger.debug({ message },
         'Processing Message with subject: %s and labels: %s',
-        email.subject, email.labelIds);
+        message.subject, message.labelIds);
 
-      if (email.labelIds.indexOf(account.inboxLabel.id) >= 0) {
-        return this._processIncomingEmail(email);
-      } else if (email.labelIds.indexOf(account.outboxLabel.id) >= 0) {
-        return this._processSentEmail(email);
+      if (message.labelIds.indexOf(account.inboxLabel.id) >= 0) {
+        return this._processIncomingEmail(message);
+      } else if (message.labelIds.indexOf(account.outboxLabel.id) >= 0) {
+        return this._processSentEmail(message);
       }
       return Promise.resolve(null);
     } catch (error) {
       this.logger.error(error, {
-        messageId: message.id,
-        labels: message.labelIds
+        id, labelIds
       }, 'Failed while process new email event');
     }
     return Promise.resolve(null);
@@ -99,8 +99,8 @@ export default class GmailService extends BaseCompService {
 
   async moveEmailToComp(messageId) {
     try {
-      const email = await this.client.getMessage(messageId);
-      await this._moveToInbox(email);
+      const message = await this.client.getMessage(messageId);
+      await this._moveToInbox(message);
     } catch (error) {
       this.logger.error(error, {
         messageId
@@ -108,26 +108,27 @@ export default class GmailService extends BaseCompService {
     }
   }
 
-  async _processIncomingEmail(email) {
-    if (email.sender !== 'ritesh@loanzen.in') {
+  async _processIncomingEmail(message) {
+    if (message.sender !== 'ritesh@loanzen.in') {
       return Promise.resolve(null);
     }
+    const email = await this._createIncomingEmail(message);
     await this._addBlockLabel(email);
     await this._sendAutoReply(email);
-    return this._createIncomingEmail(email);
+    return email;
   }
 
-  async _processSentEmail(email) {
+  async _processSentEmail(message) {
 
-    if (email.isReply() && !email.headers['X-Automated']) {
-      const replyTo = email.replyTo;
-      this.logger.debug({ email }, 'Email is a reply');
+    if (message.isReply() && !message.headers['X-Automated']) {
+      const replyTo = message.replyTo;
+      this.logger.debug({ message }, 'Email is a reply');
       try {
         const parentMail = await IncomingEmail.filterOne({ emailId: replyTo });
         if (parentMail.status !== EmailStatus.PAID.name) {
-          this.logger.debug({ email }, 'User has replied to a paid email. Must initiate Payment');
+          this.logger.debug({ message }, 'User has replied to a paid email. Must initiate Payment');
           parentMail.status = EmailStatus.REPLIED.name;
-          parentMail.replyMessageId = email.id;
+          parentMail.replyMessageId = message.id;
           parentMail.save();
           this.initiateCompPayment(parentMail);
         }
@@ -195,26 +196,25 @@ export default class GmailService extends BaseCompService {
     }
   }
 
-  async _addBlockLabel(message) {
+  async _addBlockLabel(email) {
     const { inboxLabel, blockLabel } = this.account;
 
     if (!inboxLabel.id || !blockLabel.id) {
       const msg = 'Cannot Apply label to message as either inbox or block labels are missing';
-      this.logger.error(msg);
+      this.logger.error({ email }, msg);
       throw new Error(msg);
     }
     try {
       await this.client.updateMessageLabels(
-        message.id, [blockLabel.id], [inboxLabel.id]);
+        email.messageId, [blockLabel.id], [inboxLabel.id]);
       this.logger.info(`Updated Message Label. Removed ${inboxLabel.name} and added ${blockLabel.name}`);
     } catch (error) {
-      error.message = `Unable to modify labels for message ${message}. ${error.message}`;
-      this.logger.error(error);
+      this.logger.error(error, { email }, 'Unable to modify labels for email');
       throw error;
     }
   }
 
-  async _moveToInbox(email) {
+  async _moveToInbox(message) {
     const { inboxLabel, blockLabel, compLabel } = this.account;
 
     if (!inboxLabel.id && !compLabel.id) {
@@ -224,28 +224,31 @@ export default class GmailService extends BaseCompService {
     }
     try {
       await this.client.updateMessageLabels(
-        email.id, [inboxLabel.id, compLabel.id], [blockLabel.id]);
-      this.logger.info(`Updated Message Label. Removed ${blockLabel.name} and added ${inboxLabel.name} as well as ${compLabel.name}`);
+        message.id, [inboxLabel.id, compLabel.id], [blockLabel.id]);
+      this.logger.info(`Updated Message Label. Removed ${blockLabel.name} and added ${inboxLabel.name}`
+                       + ` as well as ${compLabel.name}`);
     } catch (error) {
-      error.message = `Unable to modify labels for message ${email.message}. ${error.message}`;
-      this.logger.error(error);
+      this.logger.error(error, {
+        id: message.id,
+        labelIds: message.labelIds
+      }, 'Unable to move message back to inbox');
       throw error;
     }
   }
 
   async _sendAutoReply(email) {
     const from = this.account.email;
-    const to = email.sender;
+    const to = email.senderEmail;
     const subject = email.subject;
-    const message = this.account.responseTemplate;
-    const threadId = email.threadId;
+    const bidUrl = email.getBidUrl(config.FRONTEND_URL);
+    const message = this.account.getAutoResponse({ url: bidUrl });
     const headers = {
       References: email.emailId,
       'In-Reply-To': email.emailId,
       'X-Automated': true
     };
     const resp = await this.client.sendEmail(
-      { from, to, subject, message, threadId, headers }
+      { from, to, subject, message, headers }
     );
     this.logger.info(resp, `Sent Auto Reply to: ${to}`);
     return resp;
@@ -256,6 +259,7 @@ export default class GmailService extends BaseCompService {
       emailAccountId: this.account.id,
       emailId: email.emailId,
       threadId: email.threadId,
+      subject: email.subject,
       messageId: email.id,
       senderEmail: email.sender,
       status: EmailStatus.BLOCKED.name

@@ -19,7 +19,7 @@ export const sendBidFailure = createAction(actionTypes.SEND_BID_FAILURE);
 
 export function validateEmail({ emailId }) {
   return async function (dispatch) {
-    dispatch(showSpinner('emailComp.bidForm.loading'));
+    dispatch(showSpinner('etherComp.bidForm.loading'));
     dispatch(validateEmailRequest({ emailId }));
     try {
       const email = await api.request(APIRoutes.validateEmail, {
@@ -29,21 +29,22 @@ export function validateEmail({ emailId }) {
       });
       dispatch(validateEmailSuccess(email));
     } catch (error) {
-      console.error(error);
-      dispatch(validateEmailFailure(error));
+      console.log('Unable to validate Email', error, error.message);
+      dispatch(validateEmailFailure(error.message));
     }
-    dispatch(hideSpinner('emailComp.bidForm.loading'));
+    dispatch(hideSpinner('etherComp.bidForm.loading'));
   };
 }
 
 export function sendBid(payload) {
   return async function (dispatch) {
-    dispatch(showSpinner('emailCom.bidForm.loading'));
+    dispatch(showSpinner('etherComp.bidForm.loading'));
     dispatch(sendBidRequest(payload));
     const { account, privateKey, bid } = payload;
     try {
       const emailContract = await getEmailContract(config.ETHEREUM.providerUrl,
-                                                   account,
+                                                   account, privateKey);
+
       const resp = await emailContract.sendBid(bid);
       console.log('Bid Sent successfully', resp);
       dispatch(sendBidSuccess());
@@ -51,6 +52,6 @@ export function sendBid(payload) {
       console.error('Failed while sending bid', error);
       dispatch(sendBidFailure(error));
     }
-    dispatch(hideSpinner('emailComp.bidForm.loading'));
+    dispatch(hideSpinner('etherComp.bidForm.loading'));
   };
 }

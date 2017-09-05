@@ -32,7 +32,8 @@ export const Divider = glamorous.hr({
 export const Container = glamorous.div({
   display: 'flex',
   minHeight: '100vh',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  justifyContent: 'center'
 }, ({ theme }) => ({
   backgroundColor: theme.container.backgroundColor
 }));
@@ -96,7 +97,14 @@ export const CentralCard = ({ children, sm = '10', lg = '4', xs = '12', ...props
           }}
         >
           <RegistrationHeader />
-          <CardBlock style={{ background: '#E5EFFB', padding: 10 }}>
+          <CardBlock
+            style={{
+              background: '#E5EFFB',
+              padding: 10,
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
             {children}
           </CardBlock>
         </Card>

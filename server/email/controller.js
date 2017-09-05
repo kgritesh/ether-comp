@@ -2,23 +2,28 @@ import createError from 'http-errors';
 
 import { AuthProvider } from '../provider/index';
 import { emailQueue } from './tasks';
-import { IncomingEmail } from './models';
+import { IncomingEmail, EmailStatus } from './models';
+import { badRequest, notFound } from '../common/errors';
 
 export default {
 
-  async validateEmail(req, res) {
+  async validateEmail(req, res, next) {
     const emailId = req.params.emailId;
     try {
       const message = await IncomingEmail.get(emailId)
         .getJoin({ account: true }).run();
 
-      res.json({
-        id: message.id,
-        email: message.account.email
-      });
+      if (message.status !== EmailStatus.BLOCKED.name) {
+        next(badRequest('Bid for email is already posted'));
+      } else {
+        res.json({
+          id: message.id,
+          email: message.account.email
+        });
+      }
     } catch (error) {
       req.logger.error(error, { emailId }, 'Failed while validating email');
-      res.status(404).json({});
+      next(notFound('No matching email found.'));
     }
   },
 

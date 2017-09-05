@@ -34,7 +34,6 @@ export function constructUrl(routeName, { urlParams = {}, queryParams = {} } = {
   Object.keys(urlParams).forEach((ident) => {
     url = url.replace(`:${ident}`, urlParams[ident]);
   });
-  console.log('Url is ', url);
 
   if (!isEmpty(queryParams)) {
     const nonNilParams = pickBy(queryParams, v => !isNil(v));
@@ -57,9 +56,11 @@ function handleResponse(response, context = {}) {
   return response.text().then((errorResponse) => {
     let message = errorResponse;
     if (isJson) {
-      context = { ...JSON.parse(errorResponse), ...context };
-      message = errorResponse.error;
+      errorResponse = JSON.parse(errorResponse);
+      context = { ...errorResponse, ...context };
+      message = errorResponse.message;
     }
+    console.log('Http Request Failed', message, response.status. context);
     throw new HttpError(message, response.status, context);
   });
 }

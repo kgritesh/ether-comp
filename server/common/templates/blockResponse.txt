@@ -1,6 +1,6 @@
 Hello,
 
 I have signed up for a new service called Ether Comp that helps me in filtering spam.
-In case you want me to receive and reply to this email, please click <a href={{url}}>here</a> and bid for amount of bitcoin/ether you are willing to pay. Be rest assured that i will get the fee only if i read and reply to your email otherwise the fee can always be claimed back by you.
+In case you want me to receive and reply to this email, please click <a href="<%= url ">here</a> and bid for amount of bitcoin/ether you are willing to pay. Be rest assured that i will get the fee only if i read and reply to your email otherwise the fee can always be claimed back by you.
 
 Thanks.

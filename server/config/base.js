@@ -35,7 +35,10 @@ export default class BaseConfig {
       sendTimeout: 5
     }
   };
+
   static BASE_URL = 'http://127.0.0.1:3000';
+
+  static FRONTEND_URL = 'http://127.0.0.1:3001';
 
   static PROVIDER = {
     google: {
@@ -45,7 +48,7 @@ export default class BaseConfig {
         'https://www.googleapis.com/auth/userinfo#email',
         'https://mail.google.com/'
       ],
-      oauth2RedirectUrl: 'http://127.0.0.1:3001/auth/google/complete/',
+      oauth2RedirectUrl: '/auth/google/complete/',
       projectId: 'ether-comp',
       pubSubTopic: 'projects/ether-comp/topics/email'
     }

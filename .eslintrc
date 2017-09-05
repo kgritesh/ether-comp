@@ -29,6 +29,8 @@
     "padded-blocks": 0,
     "react/jsx-filename-extension": 0,
     "import/no-extraneous-dependencies": 0,
-    "no-this-before-super": 0
+    "no-this-before-super": 0,
+    "react/sort-comp": 0,
+    "react/require-default-props": 0
   }
 }

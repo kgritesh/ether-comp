@@ -1,5 +1,6 @@
 import fs from 'fs';
-import moment from 'moment';
+import template from 'lodash/template';
+import urljoin from 'url-join';
 
 import { Enum } from '../common/utils';
 import db from '../config/db';
@@ -89,6 +90,11 @@ export class EmailAccount extends BaseModel {
       email: this.email
     };
   }
+
+  getAutoResponse(context) {
+    const compiled = template(this.responseTemplate);
+    return compiled(context);
+  }
 }
 
 User.hasMany(EmailAccount, 'accounts', 'id', 'userId');
@@ -104,6 +110,7 @@ export class IncomingEmail extends BaseModel {
     // This is the provider id for the email.
     messageId: type.string().required(),
     threadId: type.string(),
+    subject: type.string(),
     senderEmail: type.string().email().required(),
     senderAddr: type.string(),
     status: type.string().required()
@@ -118,6 +125,7 @@ export class IncomingEmail extends BaseModel {
 
     replyMessageId: type.string()
   }
+
   static indices = ['emailAccountId', 'messageId', 'senderEmail', 'emailId'];
 
   logSerializer() {
@@ -128,6 +136,10 @@ export class IncomingEmail extends BaseModel {
       senderEmail: this.senderEmail,
       accountId: this.emailAccountId
     };
+  }
+
+  getBidUrl(baseUrl) {
+    return urljoin(baseUrl, `/email/${this.id}/bid/`);
   }
 }
 

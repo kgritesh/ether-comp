@@ -5,13 +5,14 @@ import { connect } from 'react-redux';
 
 import * as selectors from './selectors';
 
-function _Spinner({ visible, config }) {
-  return visible ? <ReactSpinner config={config} /> : null;
+function _Spinner({ visible, config, children = null }) {
+  return visible ? <ReactSpinner config={config} /> : children;
 }
 
 _Spinner.propTypes = {
   visible: PropTypes.bool.isRequired,
-  config: PropTypes.object
+  config: PropTypes.object,
+  children: PropTypes.object
 };
 
 _Spinner.defaultProps = {
