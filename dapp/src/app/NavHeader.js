@@ -35,7 +35,7 @@ export default function NavHeader({ toggleSidebar, firstName, ...props}) {
         <Logo style={{ margin: '0 20px' }} />
         <FlexRow className={`${Flex1} justify-content-end`} style={{ margin: '0 30px' }}>
           <Icon font="home" size="lg" style={{ margin: '0 20px' }} onClick={() => console.log('Home is Clicked')} />
-            <div className="m-0" style={{ fontSize: '1.1rem' }}>{`Welcome ${capitalize(firstName)}`}</div>
+          <div className="m-0" style={{ fontSize: '1.1rem' }}>{`Welcome ${capitalize(firstName)}`}</div>
         </FlexRow>
 
       </FlexRow>

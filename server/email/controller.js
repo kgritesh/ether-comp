@@ -1,11 +1,39 @@
 import createError from 'http-errors';
 
 import { AuthProvider } from '../provider/index';
-import { emailQueue } from './tasks';
-import { IncomingEmail, EmailStatus } from './models';
-import { badRequest, notFound } from '../common/errors';
+import { emailQueue, emailAccountQueue } from './tasks';
+import { IncomingEmail, EmailStatus, EmailAccount } from './models';
+import { badRequest, notFound, permissionDenied } from '../common/errors';
+
 
 export default {
+
+  async setEtherAccount(req, res, next) {
+    try {
+      const { email, etherAccount } = req.body;
+      const account = await EmailAccount.get(req.params.id);
+      if (account.userId !== req.user.id) {
+        throw permissionDenied('Cannot set ether account for another user');
+      }
+      account.etherAccount = etherAccount;
+      await account.save();
+      req.logger.info(`Updated Ether Account for email account ${account.email}`, {
+        id: account.id,
+        email: account.email
+      });
+      res.json({
+        userId: account.id,
+        email: account.email,
+        etherAccount
+      });
+
+      emailAccountQueue.add('setEtherAccount', {
+        email, etherAccount
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 
   async validateEmail(req, res, next) {
     const emailId = req.params.emailId;

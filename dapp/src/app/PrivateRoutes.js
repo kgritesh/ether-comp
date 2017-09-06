@@ -8,7 +8,7 @@ import glamorous, { ThemeProvider } from 'glamorous';
 import { AppRoutes } from '../constants/routes';
 import Home from './Home';
 import UserProfile from '../auth/UserProfile';
-import Accounts from './Accounts';
+import Accounts from '../accounts/Accounts';
 
 import { getUser } from '../auth/selectors';
 import { Container } from '../common/components/index';

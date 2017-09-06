@@ -1,5 +1,7 @@
 import { APIRoutes as authAPIRoutes } from '../auth/routes';
 import { APIRoutes as emailAPIRoutes } from '../emailComp/routes';
+import { APIRoutes as accountRoutes } from '../accounts/routes';
+
 
 export const AppRoutes = {
   login: '/auth/login',
@@ -15,5 +17,5 @@ export const AppRoutes = {
 
 
 export const APIRoutes = {
-  ...authAPIRoutes, ...emailAPIRoutes
+  ...authAPIRoutes, ...emailAPIRoutes, ...accountRoutes
 };
