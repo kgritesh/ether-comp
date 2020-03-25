@@ -242,6 +242,7 @@ export default class GmailService extends BaseCompService {
     const subject = email.subject;
     const bidUrl = email.getBidUrl(config.FRONTEND_URL);
     const message = this.account.getAutoResponse({ url: bidUrl });
+    console.log('Message', message);
     const headers = {
       References: email.emailId,
       'In-Reply-To': email.emailId,

@@ -12,7 +12,7 @@ export function encodeUser(user) {
 
 export function decodeUser(payload) {
   const userId = payload.sub;
-  return User.get(userId);
+  return User.getOrNull(userId);
 }
 
 

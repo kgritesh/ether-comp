@@ -1,10 +1,12 @@
 import uuidv4 from 'uuid/v4';
 import ExtendableError from 'es6-error';
 
+
 import db from '../config/db';
 
 const type = db.type;
 const r = db.r;
+const Errors = db.Errors;
 
 export class MultiRecordFound extends ExtendableError {}
 
@@ -43,6 +45,10 @@ export class BaseModel {
       obj,
       created: !exists
     };
+  }
+
+  static async getOrNull(id) {
+    return this.get(id).catch(Errors.DocumentNotFound, () => null);
   }
 
   static async filterOne(filter) {

@@ -10,6 +10,6 @@ export default class BaseConfig {
   };
 
   static ETHEREUM = {
-    providerUrl: 'http://localhost:8545'
+    providerUrl: 'https://rinkeby.infura.io/9ehOllb9H1NKBMeOP9xc'
   };
 }

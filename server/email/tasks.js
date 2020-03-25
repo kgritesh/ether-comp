@@ -28,6 +28,7 @@ emailAccountQueue.process('enableCompService', async (job) => {
 
 emailAccountQueue.process('setEtherAccount', async (job) => {
   const { email, etherAccount } = job.data;
+  console.log('Registering Receiver', email, etherAccount);
   emailCompContract.registerReceiver(email, etherAccount)
     .then(() => {
       logger.info(

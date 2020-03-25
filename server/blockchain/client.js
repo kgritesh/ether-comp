@@ -14,10 +14,12 @@ export default class EmailCompContract {
   constructor(rpcUrl, address, privateKey, logger) {
     const provider = new SignProvider(rpcUrl, {
       signTransaction: (rawTx, cb) => {
-        console.log(rawTx);
         const tx = new EthereumTx(rawTx);
+        console.log('Private Key', privateKey);
         tx.sign(privateKey);
-        return cb(null, tx.serialize());
+        const signedTrans = `0x${tx.serialize().toString('hex')}`;
+        console.log(signedTrans);
+        return cb(null, signedTrans);
       },
       accounts: (cb) => cb(null, [address])
     });
@@ -39,7 +41,10 @@ export default class EmailCompContract {
     contractDef.setProvider(this.web3.currentProvider);
     return contractDef.deployed().then(inst => {
       this.contract = inst;
+      this.logger.info('Contract Linked successfully');
       this._subscribeEvents();
+    }).catch((error) => {
+      this.logger.error(error, 'Failed to link Contract');
     });
   }
 
@@ -56,6 +61,7 @@ export default class EmailCompContract {
         this.logger.error(error, `Failed to subscribe to ${eventName}`);
         return;
       }
+      this.logger.info('Succesfully Subscribed to %s', eventName);
       this._publishEvents(eventName, event);
     });
   }
@@ -85,9 +91,11 @@ export default class EmailCompContract {
 
   async _funcTransaction(funcName, ...args) {
     const func = this.getFunction(funcName);
+    console.log('Reaching Here');
     const gasEstimate = await func.estimateGas(...args, {
       from: this.account
     });
+    this.logger.info('Gas Estimate is ', gasEstimate);
     return func(...args, {
       gas: gasEstimate + 100000,
       from: this.account

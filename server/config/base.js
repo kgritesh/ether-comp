@@ -50,7 +50,7 @@ export default class BaseConfig {
       ],
       oauth2RedirectUrl: '/auth/google/complete/',
       projectId: 'ether-comp',
-      pubSubTopic: 'projects/ether-comp/topics/email'
+      pubSubTopic: 'projects/ether-comp/topics/emails'
     }
   };
 
@@ -66,9 +66,9 @@ export default class BaseConfig {
   };
 
   static ETHEREUM = {
-    RPC_URL: 'http://127.0.0.1:8545',
-    ACCOUNT: process.env.ETHEREUM_ACCOUNT || '0xaa852a8fd6b8348139948d5c43849cd4cc501a74',
-    PRIVATE_KEY: process.env.ETHEREUM_PRIVATE_KEY || '02dbf162ef8db3620639817b63faada80077cdda4caa87579034f0f602753caf'
+    RPC_URL: 'https://rinkeby.infura.io/9ehOllb9H1NKBMeOP9xc',
+    ACCOUNT: process.env.ETHEREUM_ACCOUNT || '0xB81FBAEe94e17fC925c99aA2293c55d1Da98629C',
+    PRIVATE_KEY: process.env.ETHEREUM_PRIVATE_KEY || '3ac245a08f83178dd85ecb4320e607769d31a60702adf7a7006af01e57ebedfa'
   };
 
   static VERSION = process.env.npm_package_version;

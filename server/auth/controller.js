@@ -1,4 +1,4 @@
-import config from '../config/config';
+fimport config from '../config/config';
 import { getGoogleClient, AuthProvider } from '../provider/index';
 import { User } from '../user/models';
 import { serializeUser } from '../user/serializers';
@@ -31,6 +31,7 @@ export default {
     const { authCode } = req.body;
     try {
       const { user, accessToken, refreshToken } = await googleClient.getUser(authCode);
+      console.log('Reaching here', user);
       const { obj, created } = await User.createOrUpdateAccount({
         ...user,
         accessToken,
